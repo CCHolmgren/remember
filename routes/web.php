@@ -21,34 +21,8 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/items', function() {
-    return ['items' => Item::all()];
-});
+Route::name('item.index')->get('items', 'ItemController@index');
+Route::name('item.save')->post('/items/save', 'ItemController@save');
+Route::name('item.delete')->delete('/items/{item}/', 'ItemController@delete');
+Route::name('item.update')->post('items/{item}/save', 'ItemController@update');
 
-Route::post('/items/{item}/save', function($item) {
-    $item = Item::find($item);
-    $item->fill(request()->only('name', 'type'));
-    $item->content = collect(request()->only('content')['content'])->reject(function($item) {
-        return array_get($item, 'key') == null || trim(array_get($item, 'key')) == "";
-    })->all();
-    $item->save();
-
-    return ['item' => Item::find($item->id)];
-});
-
-Route::delete('/items/{item}/', function(Item $item) {
-    $item->delete();
-});
-
-Route::post('/items/save', function() {
-    $item = new Item(request()->only('name', 'type'));
-    $item->user_id = 1;
-
-    $item->content = collect(request()->only('content')['content'])->reject(function($item) {
-        return array_get($item, 'key') == null || trim(array_get($item, 'key')) == "";
-    })->all();
-
-    $item->save();
-
-    return ['item' => Item::find($item->id)];
-});

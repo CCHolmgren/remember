@@ -9,7 +9,7 @@
             <label>What kind of item is it?</label>
             <select class="form-control" v-model="type">
                 <option value="" disabled hidden>Select a type</option>
-                <option value="Website">Website</option>
+                <option v-for="type in types" :value="type">{{ type }}</option>
                 <option value="custom">Custom</option>
             </select>
         </div>
@@ -19,7 +19,7 @@
 
         <div v-for="(item, index) in form.content">
             <div class="form-group row mb-0" v-if="index == 0">
-                <div class="col-md-5">
+                <div :class="enableRowRemoval ? 'col-md-5' : 'col-md-6'">
                     <label>Name of row</label>
                 </div>
                 <div class="col-md-6">
@@ -27,11 +27,11 @@
                 </div>
             </div>
             <div class="form-group row">
-                <div class="col-md-5">
+                <div :class="enableRowRemoval ? 'col-md-5' : 'col-md-6'">
                     <input class="form-control" type="text" v-model="item.key" placeholder="Key">
                 </div>
                 <div class="col-md-6">
-                    <input class="form-control" type="text" v-model="item.value" placeholder="Value">
+                    <textarea rows="1" class="form-control" v-model="item.value" placeholder="Value"></textarea>
                 </div>
                 <div class="col-md-1" v-show="enableRowRemoval">
                     <button class="btn btn-danger" @click="removeKey(index)">&times;</button>
@@ -62,7 +62,8 @@
                 type: '',
                 enableRowRemoval: false,
                 clearedForm: false,
-                oldFormData: null
+                oldFormData: null,
+                types: ['Website']
             }
         },
         computed: {
@@ -89,7 +90,7 @@
                 return this.defaultKeys.filter(key => alreadyAddedKeys.indexOf(key.key) == -1)
             },
             formIsDisabled() {
-                return this.form.name.trim() == "" || this.form.type.trim() == "";
+                return this.form.name.trim() == "" || (this.form.type.trim() == "" && this.type.trim() == "");
             }
         },
         mounted() {
@@ -105,6 +106,11 @@
             },
             setItem(item) {
                 this.form = item;
+                if(this.types.indexOf(item.type) !== -1) {
+                    this.type = item.type;
+                } else {
+                    this.type = 'custom';
+                }
             },
             add() {
                 this.form.content.push({key: '', value: ''})
@@ -121,6 +127,7 @@
                 }
                 axios.post(this.form.id ? `/items/${this.form.id}/save` : '/items/save', this.form).then(response => {
                     this.clearForm();
+                    this.clearedForm = false;
                     this.$emit('saveditem', response.data.item)
                 })
             },

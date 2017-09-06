@@ -1,20 +1,22 @@
 <template>
     <div>
-        <div class="panel panel-default">
-            <div class="panel-heading">Filter based on type</div>
-            <div class="panel-body">
-                <div>
-                    <button class="btn" :class="filterType == null ? 'btn-secondary':'btn-default'" @click="resetFilter()">Show all</button>
-                    <button v-for="type in types" class="btn" :class="filterType == type ? 'btn-secondary':'btn-default'" @click="filterByType(type)">{{ type }}
-                    </button>
+        <div v-show="!showEditor">
+            <div class="panel panel-default">
+                <div class="panel-heading">Filter based on type</div>
+                <div class="panel-body">
+                    <div>
+                        <button class="btn" :class="filterType == null ? 'btn-secondary':'btn-default'" @click="resetFilter()">Show all</button>
+                        <button v-for="type in types" class="btn" :class="filterType == type ? 'btn-secondary':'btn-default'" @click="filterByType(type)">{{ type }}
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <item-show v-for="item in computedItems" key="item.id" :item="item" @deleteditem="deleteItem"
+            <item-show v-for="item in computedItems" :key="item.id" :item="item" @deleteditem="deleteItem"
                    @edititem="editItem" @saveditem="savedItem"></item-show>
+        </div>
 
         <div class="form-group">
-            <button class="btn btn-default" @click="showEditor = !showEditor">{{ showEditor ? 'Hide' : 'Show' }} editor
+            <button class="btn btn-default" @click="showEditor = !showEditor">{{ showEditor ? 'Cancel' : 'New item' }}
             </button>
         </div>
         <div v-show="showEditor">
@@ -55,6 +57,7 @@
                 axios.get('/items').then(response => {
                     this.itemArray = response.data.items
                 })
+                this.showEditor = false;
             },
             deleteItem(item) {
                 this.itemArray = this.itemArray.filter(i => i.id !== item.id)
@@ -70,8 +73,8 @@
                 this.filterType = type
             },
             savedItem(item) {
-                const index = this.itemArray.findIndex(i => i.id == item.id)
-                this.itemArray.splice(index, 1, item)
+                const index = this.itemArray.findIndex(i => i.id == item.id);
+                this.itemArray.splice(index, 1, item);
             }
         },
         components:{
