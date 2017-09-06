@@ -42042,11 +42042,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     methods: {
         fetchItems: function fetchItems() {
-            var _this2 = this;
-
-            axios.get('/items').then(function (response) {
-                _this2.itemArray = response.data.items;
-            });
+            this.update();
             this.showEditor = false;
         },
         deleteItem: function deleteItem(item) {
@@ -42069,6 +42065,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 return i.id == item.id;
             });
             this.itemArray.splice(index, 1, item);
+        },
+        update: function update() {
+            var _this2 = this;
+
+            axios.get('/items').then(function (response) {
+                _this2.itemArray = response.data.items;
+            });
         }
     },
     components: {
@@ -42551,6 +42554,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 
 
@@ -42594,6 +42598,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         hideConfirmDelete: function hideConfirmDelete() {
             this.showConfirmDelete = false;
+        },
+        copy: function copy() {
+            var _this2 = this;
+
+            axios.post('/items/copy/' + this.item.id).then(function (response) {
+                _this2.$emit('update-items');
+            });
         }
     },
     components: {
@@ -42636,6 +42647,18 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   })]), _vm._v(" "), _c('span', {
     staticClass: "pull-right"
   }, [_c('button', {
+    staticClass: "btn btn-styleless",
+    attrs: {
+      "data-toggle": "tooltip",
+      "data-placement": "top",
+      "title": "Copy"
+    },
+    on: {
+      "click": _vm.copy
+    }
+  }, [_c('span', {
+    staticClass: "glyphicon glyphicon-copy"
+  })]), _vm._v(" "), _c('button', {
     staticClass: "btn btn-styleless",
     attrs: {
       "data-toggle": "tooltip",
@@ -42770,7 +42793,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       on: {
         "deleteditem": _vm.deleteItem,
         "edititem": _vm.editItem,
-        "saveditem": _vm.savedItem
+        "saveditem": _vm.savedItem,
+        "update-items": _vm.update
       }
     })
   })], 2), _vm._v(" "), _c('div', {

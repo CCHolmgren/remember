@@ -9,6 +9,7 @@
                 </span>
 
                 <span class="pull-right">
+                    <button class="btn btn-styleless" data-toggle="tooltip" data-placement="top" title="Copy" @click="copy"><span class="glyphicon glyphicon-copy"></span></button>
                     <button class="btn btn-styleless" data-toggle="tooltip" data-placement="top" title="Edit" @click="toggleEditForm(item)"><span class="glyphicon glyphicon-edit"></span></button>
                     <button class="btn btn-styleless" data-toggle="tooltip" data-placement="top" title="Delete" @click="toggleDeleteForm()"><span class="glyphicon glyphicon-remove"></span></button>
                 </span>
@@ -73,6 +74,11 @@
             },
             hideConfirmDelete() {
                 this.showConfirmDelete = false
+            },
+            copy() {
+                axios.post(`/items/copy/${this.item.id}`).then(response => {
+                    this.$emit('update-items')
+                })
             }
         },
         components: {

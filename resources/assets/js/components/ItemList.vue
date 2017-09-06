@@ -12,7 +12,7 @@
                 </div>
             </div>
             <item-show v-for="item in computedItems" :key="item.id" :item="item" @deleteditem="deleteItem"
-                   @edititem="editItem" @saveditem="savedItem"></item-show>
+                   @edititem="editItem" @saveditem="savedItem" @update-items="update"></item-show>
         </div>
 
         <div class="form-group">
@@ -54,9 +54,7 @@
         },
         methods: {
             fetchItems() {
-                axios.get('/items').then(response => {
-                    this.itemArray = response.data.items
-                })
+                this.update();
                 this.showEditor = false;
             },
             deleteItem(item) {
@@ -75,6 +73,11 @@
             savedItem(item) {
                 const index = this.itemArray.findIndex(i => i.id == item.id);
                 this.itemArray.splice(index, 1, item);
+            },
+            update() {
+                axios.get('/items').then(response => {
+                    this.itemArray = response.data.items
+                })
             }
         },
         components:{

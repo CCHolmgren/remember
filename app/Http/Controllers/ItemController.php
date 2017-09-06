@@ -52,4 +52,14 @@ class ItemController extends Controller
             'item' => Item::create($data)
         ];
     }
+
+    function copy(Item $item)
+    {
+        $item = $item->replicate();
+        $item->save();
+
+        return [
+            'item' => $item
+        ];
+    }
 }
